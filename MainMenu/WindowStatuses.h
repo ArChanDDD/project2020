@@ -21,13 +21,13 @@ void ChooseLevel(RenderWindow & window) {
 
 void Settings(RenderWindow & window) {
 	Texture menuBackground, BackTexture, FS_Texture, E_Texture;
-	E_Texture.loadFromFile("C:\\Users\\povla\\Desktop\\Project\\Project\\image\\MainMenu_Exit.png");
-	menuBackground.loadFromFile("C:\\Users\\povla\\Desktop\\Project\\Project\\image\\MainMenu_Background.png");
-	BackTexture.loadFromFile("C:\\Users\\povla\\Desktop\\Project\\Project\\image\\Settings_Back.png");
+	E_Texture.loadFromFile("image\\MainMenu_Exit.png");
+	menuBackground.loadFromFile("image\\MainMenu_Background.png");
+	BackTexture.loadFromFile("image\\Settings_Back.png");
 	if (!FullScreen)
-		FS_Texture.loadFromFile("C:\\Users\\povla\\Desktop\\Project\\Project\\image\\Settings_FullScreen_On.png");
+		FS_Texture.loadFromFile("image\\Settings_FullScreen_On.png");
 	else
-		FS_Texture.loadFromFile("C:\\Users\\povla\\Desktop\\Project\\Project\\image\\Settings_FullScreen_Off.png");
+		FS_Texture.loadFromFile("image\\Settings_FullScreen_Off.png");
 	Sprite SetE(E_Texture), SetBg(menuBackground), SetFS(FS_Texture), SetB(BackTexture);
 	bool isSet = 1, ToFullScreen = 0;
 	int setNum = 0;
@@ -49,9 +49,9 @@ void Settings(RenderWindow & window) {
 		if (IntRect(WIDTH - 80, HEIGHT - 80, 50, 50).contains(Mouse::getPosition(window))) { SetE.setColor(Color::Blue); setNum = -1; }
 
 		if (Mouse::isButtonPressed(Mouse::Left)) {
-			if (setNum == 1 && !FullScreen) { window.setSize(FullScreenSize); WIDTH = FullScreenSize.x; HEIGHT = FullScreenSize.y; window.setPosition(ZeroPosition); FullScreen = true; } //FullScreen, работает, но хреново, лучше исправить.
+			if (setNum == 1 && !FullScreen) { window.setSize(FullScreenSize); WIDTH = FullScreenSize.x; HEIGHT = FullScreenSize.y; window.setPosition(ZeroPosition); FullScreen = true; } //FullScreen, СЂР°Р±РѕС‚Р°РµС‚, РЅРѕ С…СЂРµРЅРѕРІРѕ, Р»СѓС‡С€Рµ РёСЃРїСЂР°РІРёС‚СЊ.
 			else
-				if (setNum == 1 && FullScreen) { window.setSize(NotFullScreenSize); WIDTH = 500; HEIGHT = 500; window.setPosition(StartPosition); FullScreen = false;  }					      //Выход из FullScreen
+				if (setNum == 1 && FullScreen) { window.setSize(NotFullScreenSize); WIDTH = 500; HEIGHT = 500; window.setPosition(StartPosition); FullScreen = false;  }					      //Р’С‹С…РѕРґ РёР· FullScreen
 			if (setNum == 2) { ToMain = 1; isSet = false; }
 			if (setNum == -1) { EndProgram = true; isSet = false; }
 		}
@@ -68,15 +68,15 @@ void Settings(RenderWindow & window) {
 
 void MainMenu(RenderWindow& window) {
 	Texture NG_Texture, C_Texture, CL_Texture, S_Texture, menuBackground, Ex_Texture;
-	NG_Texture.loadFromFile("C:\\Users\\povla\\Desktop\\Project\\Project\\image\\MainMenu_NewGame.png");
-	C_Texture.loadFromFile("C:\\Users\\povla\\Desktop\\Project\\Project\\image\\MainMenu_Complete.png");
-	Ex_Texture.loadFromFile("C:\\Users\\povla\\Desktop\\Project\\Project\\image\\MainMenu_Exit.png");
-	CL_Texture.loadFromFile("C:\\Users\\povla\\Desktop\\Project\\Project\\image\\MainMenu_ChooseLvl.png");
-	S_Texture.loadFromFile("C:\\Users\\povla\\Desktop\\Project\\Project\\image\\MainMenu_Settings.png");
-	menuBackground.loadFromFile("C:\\Users\\povla\\Desktop\\Project\\Project\\image\\MainMenu_Background.png");
+	NG_Texture.loadFromFile("image\\MainMenu_NewGame.png");
+	C_Texture.loadFromFile("image\\MainMenu_Complete.png");
+	Ex_Texture.loadFromFile("image\\MainMenu_Exit.png");
+	CL_Texture.loadFromFile("image\\MainMenu_ChooseLvl.png");
+	S_Texture.loadFromFile("image\\MainMenu_Settings.png");
+	menuBackground.loadFromFile("image\\MainMenu_Background.png");
 	Sprite menuEx(Ex_Texture), menuNG(NG_Texture), menuC(C_Texture), menuCL(CL_Texture), menuS(S_Texture), menuBg(menuBackground);
-	bool isMenu = 1;												// проверяем, что действия в данном меню не закончены	
-	int menuNum = 0;												// Номер следующего меню
+	bool isMenu = 1;												// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚Рѕ РґРµР№СЃС‚РІРёСЏ РІ РґР°РЅРЅРѕРј РјРµРЅСЋ РЅРµ Р·Р°РєРѕРЅС‡РµРЅС‹	
+	int menuNum = 0;												// РќРѕРјРµСЂ СЃР»РµРґСѓСЋС‰РµРіРѕ РјРµРЅСЋ
 	menuBg.setPosition(0, 0);
 	menuNG.setPosition(WIDTH / 2 - 100, HEIGHT * 0.4);
 	menuC.setPosition(WIDTH / 2 - 100, HEIGHT * 0.4 + 60);
