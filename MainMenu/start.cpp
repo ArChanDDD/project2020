@@ -9,13 +9,13 @@ using namespace sf;
 
 
 int main() {
-	Window windowTest;
+	/*Window windowTest;
 	windowTest.create(VideoMode(100, 100), "test", Style::Fullscreen);
 	FullScreenSize = windowTest.getSize();
-	windowTest.close();
+	windowTest.close();*/
 
 	RenderWindow window(VideoMode(WIDTH, HEIGHT), "game");
-	NotFullScreenSize = window.getSize();
+	//NotFullScreenSize = window.getSize();
 	StartPosition = window.getPosition();
 	NextMenu = MainMenu;
 	To_Next_Menu(window);
