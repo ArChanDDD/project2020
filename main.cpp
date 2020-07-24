@@ -1,6 +1,6 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
-#include "room.h"
+#include "core.h"
 
 using namespace std;
 
@@ -13,8 +13,8 @@ int main()
 
 	bool Esc_press = false;
 	bool active = true;
-	room test_level;
-	test_level.start_from_beginning(window, "room");
+	core test_level;
+	test_level.start(window, "location1", "room", 78);
 	while (window.isOpen())
 	{
 		float time = clock.getElapsedTime().asSeconds();

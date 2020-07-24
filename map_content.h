@@ -5,7 +5,7 @@
 
 
 #include "general_terms_for_level_part.h"
-#include "tmx_reader.h"\
+#include "tmx_reader.h"
 
 class entity
 {
@@ -15,6 +15,8 @@ private:
 	direct_enum dir;
 	int health, max_health;
 	float run_speed, jump_speed;
+	float jump_pulse;
+	sf::Clock jump_clock;
 	sf::Clock damage_clock;
 	bool alive;
 
@@ -22,7 +24,7 @@ private:
 
 	sf::Clock frame_clock;
 
-	friend class mechanical_corrector;
+	friend class mechanical_interactor;
 	friend class dirt_interactor;
 
 	void cause_damage(int);
@@ -113,6 +115,7 @@ private:
 	dirt_status_enum status;
 	std::vector <mud> v_muds;
 	bool active_mud;
+
 public:
 	bool init(std::string, float, float, unsigned int);
 

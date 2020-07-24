@@ -146,13 +146,13 @@ struct drive_circumstances_struct
 	}
 };
 
-class room_portal : public static_circumstance
+class room_transition : public static_circumstance
 {
 private:
-	std::string next_room_name;
+	std::string name;
 public:
-	bool init(float, float, float, float, std::string);
-	std::string get_next_room_name();
+	bool init(std::string, float, float, float, float);
+	std::string get_name();
 };
 
 class map_class
@@ -177,7 +177,7 @@ private:
 	dirt_circumstances_struct dirt_circumstances;
 	drop_circumstances_struct drop_circumstances;
 	std::map <unsigned int, static_circumstance> map_checkpoints;
-	std::map <unsigned int, room_portal> map_room_portals;
+	std::map <unsigned int, room_transition> map_room_transitions;
 	drive_circumstances_struct drive_circumstances;
 	unsigned int player_start_id;
 	unsigned int player_finish_id;
@@ -186,7 +186,7 @@ private:
 	friend class mechanical_corrector;
 	friend class dirt_interactor;
 public:
-	bool init(tmx_file);
+	bool init(tmx_file, std::string);
 	bool load_from_file(std::string);
 
 	std::string get_version();
@@ -207,7 +207,7 @@ public:
 	dirt_circumstances_struct& get_dirt_circumstances();
 	drop_circumstances_struct& get_drop_circumstances();
 	std::map <unsigned int, static_circumstance>& get_map_checkpoints();
-	std::map <unsigned int, room_portal>& get_map_room_portals();
+	std::map <unsigned int, room_transition>& get_map_room_transitions();
 	drive_circumstances_struct& get_drive_circumstances();
 	std::map <unsigned int, std::pair <std::string, std::pair<float, float>>>& get_map_born();
 	unsigned int get_player_start_id();

@@ -203,9 +203,11 @@ void entity::jump()
 {
 	if (alive)
 	{
+		float new_v_y;
 		bool jumped = false;
 		if (matter_part.get_position() == on_ground)
 		{
+			//new_v_y = -jumping_acceleration * time;
 			matter_part.set_speed(matter_part.get_v_x(), -jump_speed);
 			jumped = true;
 		}
@@ -216,32 +218,32 @@ void entity::jump()
 		}
 		if (matter_part.get_position() == stick_left)
 		{
-			matter_part.set_speed(jump_speed / 2, -jump_speed * sqrt(3) / 2);
+			matter_part.set_speed(run_speed, -jump_speed);
 			jumped = true;
 		}
 		if (matter_part.get_position() == stick_right)
 		{
-			matter_part.set_speed(-jump_speed / 2, -jump_speed * sqrt(3) / 2);
+			matter_part.set_speed(-run_speed, -jump_speed);
 			jumped = true;
 		}
 		if (matter_part.get_position() == in_left_down_border)
 		{
-			matter_part.set_speed(-jump_speed / sqrt(2), jump_speed / sqrt(2));
+			matter_part.set_speed(-run_speed, jump_speed);
 			jumped = true;
 		}
 		if (matter_part.get_position() == in_left_up_border)
 		{
-			matter_part.set_speed(-jump_speed / sqrt(2), -jump_speed / sqrt(2));
+			matter_part.set_speed(-run_speed, -jump_speed);
 			jumped = true;
 		}
 		if (matter_part.get_position() == in_right_down_border)
 		{
-			matter_part.set_speed(jump_speed / sqrt(2), jump_speed / sqrt(2));
+			matter_part.set_speed(run_speed, jump_speed);
 			jumped = true;
 		}
 		if (matter_part.get_position() == in_right_up_border)
 		{
-			matter_part.set_speed(jump_speed / sqrt(2), -jump_speed / sqrt(2));
+			matter_part.set_speed(run_speed, -jump_speed);
 			jumped = true;
 		}
 		if (jumped)

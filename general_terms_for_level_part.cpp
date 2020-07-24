@@ -70,8 +70,12 @@ bool does_rectangles_intersects(std::pair<std::pair<float, float>, std::pair<flo
 		return true;
 	return false;
 }
+//float find_distance_from_point_to_rectangle(std::pair<float, float> p, std::pair<std::pair<float, float>, std::pair<float, float>> rect)
+//{
+//	
+//}
 
-bool image::init(tage image_tage)
+bool image::init(tage image_tage, string adress_path)
 {
 	source = "";
 
@@ -79,7 +83,7 @@ bool image::init(tage image_tage)
 		return false;
 	if (!is_number(image_tage.get_characteristic("width")) || !is_number(image_tage.get_characteristic("height")))
 		return false;
-	source = "levels/" + image_tage.get_characteristic("source");
+	source = adress_path + "/../" + image_tage.get_characteristic("source");
 	width = atoi(image_tage.get_characteristic("width").c_str());
 	height = atoi(image_tage.get_characteristic("height").c_str());
 	return true;
@@ -97,7 +101,7 @@ int image::get_height()
 	return height;
 }
 
-bool tileset::init(tage tileset_tage)
+bool tileset::init(tage tileset_tage, string adress_path)
 {
 	name = "";
 
@@ -113,7 +117,7 @@ bool tileset::init(tage tileset_tage)
 	columns = atoi(tileset_tage.get_characteristic("columns").c_str());
 	if (tileset_tage.get_v_subtages().size() != 1)
 		return false;
-	if (!tileset_image.init(tileset_tage.get_v_subtages()[0]))
+	if (!tileset_image.init(tileset_tage.get_v_subtages()[0], adress_path))
 		return false;
 	return true;
 }
@@ -292,12 +296,12 @@ void body::update(float cur_time)
 		sticky = 1;
 	if (position == flying || position == on_ground)
 		v_y += gravitation * cur_time;
-	if (position == stick_left)
-		v_x -= INFINITY;
-	if (position == stick_right)
-		v_x += INFINITY;
-	if (position == stick_up)
-		v_y -= INFINITY;
+	//if (position == stick_left)
+	//	v_x -= INFINITY;
+	//if (position == stick_right)
+	//	v_x += INFINITY;
+	//if (position == stick_up)
+	//	v_y -= INFINITY;
 	if (position == in_left_up_angle)
 	{
 		v_x -= dist_left;

@@ -15,8 +15,9 @@ bool fone_drawer::print_tile(unsigned int tile_code, float x, float y)
 }
 bool fone_drawer::init(RenderWindow* WINDOW, map_class* p_GM)
 {
-	v_map_textures.clear();
 	v_map_images.clear();
+	v_map_textures.clear();
+	v_map_sprites.clear();
 
 	p_window = WINDOW;
 	p_map = p_GM;
@@ -87,7 +88,7 @@ bool dirt_drawer::init(RenderWindow* WINDOW, std::string ADRESS)
 	if (dirt_tage.get_v_subtages_with_name("tileset").size() != 1)
 		return false;
 	tileset spark_tileset_temp;
-	if (!spark_tileset_temp.init(dirt_tage.get_v_subtages_with_name("tileset")[0]))
+	if (!spark_tileset_temp.init(dirt_tage.get_v_subtages_with_name("tileset")[0], adress))
 		return false;
 	width = spark_tileset_temp.get_tilewidth();
 	height = spark_tileset_temp.get_tileheight();
@@ -316,7 +317,7 @@ bool drop_drawer::init(sf::RenderWindow* WINDOW, std::string ADRESS)
 	if (drop_tage.get_v_subtages_with_name("tileset").size() != 1)
 		return false;
 	tileset drop_tileset_temp;
-	if (!drop_tileset_temp.init(drop_tage.get_v_subtages_with_name("tileset")[0]))
+	if (!drop_tileset_temp.init(drop_tage.get_v_subtages_with_name("tileset")[0], adress))
 		return false;
 	width = drop_tileset_temp.get_tilewidth();
 	height = drop_tileset_temp.get_tileheight();
@@ -443,7 +444,7 @@ bool game_info_drawer::init(RenderWindow* WINDOW)
 
 	tage image_tage = game_info_tage.get_v_subtages_with_name("image")[0];
 	image new_image;
-	if (!new_image.init(image_tage))
+	if (!new_image.init(image_tage, "other/game_info.tsv"))
 		return false;
 	if (!info_image.loadFromFile(new_image.get_source()))
 		return false;

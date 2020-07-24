@@ -261,19 +261,19 @@ int drop_replenish::get_replenish_value()
 	return replenish_value;
 }
 
-bool room_portal::init(float X, float Y, float WIDTH, float HEIGHT, std::string NEXT_ROOM_NAME)
+bool room_transition::init(std::string NAME, float X, float Y, float WIDTH, float HEIGHT)
 {
 	if (!static_circumstance::set(X, Y, WIDTH, HEIGHT))
 		return false;
-	next_room_name = NEXT_ROOM_NAME;
+	name = NAME;
 	return true;
 }
-std::string room_portal::get_next_room_name()
+std::string room_transition::get_name()
 {
-	return next_room_name;
+	return name;
 }
 
-bool map_class::init(tmx_file INPUT_FILE)
+bool map_class::init(tmx_file INPUT_FILE, std::string adress_path)
 {
 	v_tilesets.clear();
 	v_layers.clear();
@@ -281,7 +281,7 @@ bool map_class::init(tmx_file INPUT_FILE)
 	dirt_circumstances.clear();
 	drop_circumstances.clear();
 	map_checkpoints.clear();
-	map_room_portals.clear();
+	map_room_transitions.clear();
 	drive_circumstances.clear();
 	map_born.clear();
 
@@ -307,7 +307,7 @@ bool map_class::init(tmx_file INPUT_FILE)
 	}
 	for (int i(temp_v_tilesets_tage.size() - 1); i >= 0; i--)
 	{
-		if (!add_tileset.init(temp_v_tilesets_tage[i]))
+		if (!add_tileset.init(temp_v_tilesets_tage[i], adress_path))
 			return false;
 		v_tilesets.push_back(add_tileset);
 	}
@@ -392,13 +392,13 @@ bool map_class::init(tmx_file INPUT_FILE)
 					player_finish_id = add_object_group.get_v_object_rects()[i].get_id();
 			}
 		}
-		if (add_object_group.get_name() == "room_portal")
+		if (add_object_group.get_name() == "room_transition")
 		{
 			if (add_object_group.get_v_object_points().size() != 0)
 				return false;
 			for (int i(0); i < add_object_group.get_v_object_rects().size(); i++)
 			{
-				if (!map_room_portals[add_object_group.get_v_object_rects()[i].get_id()].init(add_object_group.get_v_object_rects()[i].get_x(), add_object_group.get_v_object_rects()[i].get_y(), add_object_group.get_v_object_rects()[i].get_width(), add_object_group.get_v_object_rects()[i].get_height(), add_object_group.get_v_object_rects()[i].get_name()))
+				if (!map_room_transitions[add_object_group.get_v_object_rects()[i].get_id()].init(add_object_group.get_v_object_rects()[i].get_name(), add_object_group.get_v_object_rects()[i].get_x(), add_object_group.get_v_object_rects()[i].get_y(), add_object_group.get_v_object_rects()[i].get_width(), add_object_group.get_v_object_rects()[i].get_height()))
 					return false;
 			}
 		}
@@ -462,7 +462,7 @@ bool map_class::load_from_file(string ADRESS)
 	tmx_file map_file;
 	if (!map_file.load_from_file(ADRESS))
 		return false;
-	if (!init(map_file))
+	if (!init(map_file, ADRESS))
 		return false;
 	return true;
 }
@@ -538,9 +538,9 @@ map <unsigned int, static_circumstance>& map_class::get_map_checkpoints()
 {
 	return map_checkpoints;
 }
-map <unsigned int, room_portal>& map_class::get_map_room_portals()
+map <unsigned int, room_transition>& map_class::get_map_room_transitions()
 {
-	return map_room_portals;
+	return map_room_transitions;
 }
 unsigned int map_class::get_player_start_id()
 {

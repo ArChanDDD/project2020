@@ -3,7 +3,7 @@
 using namespace std;
 
 
-bool mechanical_corrector::old_does_static_body_interfere_body_entity(static_body* p_sb, body* p_et)
+bool mechanical_interactor::old_does_static_body_interfere_body_entity(static_body* p_sb, body* p_et)
 {
 	float eps = 0.0001;
 	pair <float, float> p1, p2;
@@ -24,7 +24,7 @@ bool mechanical_corrector::old_does_static_body_interfere_body_entity(static_bod
 		return true;
 	return false;
 }
-bool mechanical_corrector::old_can_go_x(map_class* p_game_mp, entity* p_et)
+bool mechanical_interactor::old_can_go_x(map_class* p_game_mp, entity* p_et)
 {
 	bool ok = true;
 	for (int i(0); i < v_actual_static_bodies_id.size(); i++)
@@ -40,7 +40,7 @@ bool mechanical_corrector::old_can_go_x(map_class* p_game_mp, entity* p_et)
 	}
 	return ok;
 }
-bool mechanical_corrector::old_can_go_y(map_class* p_game_mp, entity* p_et)
+bool mechanical_interactor::old_can_go_y(map_class* p_game_mp, entity* p_et)
 {
 	bool ok = true;
 	for (int i(0); i < v_actual_static_bodies_id.size(); i++)
@@ -56,7 +56,7 @@ bool mechanical_corrector::old_can_go_y(map_class* p_game_mp, entity* p_et)
 	}
 	return ok;
 }
-bool mechanical_corrector::old_can_go_xy(map_class* p_game_mp, entity* p_et)
+bool mechanical_interactor::old_can_go_xy(map_class* p_game_mp, entity* p_et)
 {
 	bool ok = true;
 	for (int i(0); i < v_actual_static_bodies_id.size(); i++)
@@ -72,7 +72,7 @@ bool mechanical_corrector::old_can_go_xy(map_class* p_game_mp, entity* p_et)
 	}
 	return ok;
 }
-void mechanical_corrector::old_determ_position(map_class* p_game_mp, entity* p_et)
+void mechanical_interactor::old_determ_position(map_class* p_game_mp, entity* p_et)
 {
 	bool can_left = true, can_right = true, can_up = true, can_down = true;
 	body temp_bd_ent;
@@ -164,7 +164,7 @@ void mechanical_corrector::old_determ_position(map_class* p_game_mp, entity* p_e
 			p_et->set_position(on_ground);
 	}
 }
-bool mechanical_corrector::old_handle(map_class* p_game_mp, entity* p_et)
+bool mechanical_interactor::old_handle(map_class* p_game_mp, entity* p_et)
 {
 	find_static_bodies_in_area(p_game_mp, p_et->get_x() + p_et->get_width() / 2, p_et->get_y() + p_et->get_height() / 2);
 	if (!correct_position_and_set_distance(p_game_mp, p_et))
@@ -184,23 +184,24 @@ bool mechanical_corrector::old_handle(map_class* p_game_mp, entity* p_et)
 }
 
 
-void mechanical_corrector::find_static_bodies_in_area(map_class* p_game_mp, float x0, float y0)
+void mechanical_interactor::find_static_bodies_in_area(map_class* p_game_mp, float x0, float y0)
 {
 	v_actual_static_bodies_id.clear();
 	
-	float actual_radius = 500;
-	float bd_center_x, bd_center_y, et_center_x, et_center_y;
+	float actual_dist = 250;
+	std::pair<std::pair<float, float>, std::pair<float, float>> sensitive_rect;
+	sensitive_rect.first = { x0 - actual_dist, y0 - actual_dist };
+	sensitive_rect.second = { x0 + actual_dist, y0 + actual_dist };
+	std::pair<std::pair<float, float>, std::pair<float, float>> current_body_rect;
 	for (auto it = p_game_mp->get_map_static_bodies().begin(); it != p_game_mp->get_map_static_bodies().end(); it++)
 	{
-		bd_center_x = it->second.get_x() + it->second.get_width() / 2;
-		bd_center_y = it->second.get_y() + it->second.get_height() / 2;
-		if (sqrt((bd_center_x - x0) * (bd_center_x - x0) + (bd_center_y - y0) * (bd_center_y - y0)) <= actual_radius)
-		{
+		current_body_rect.first = { it->second.get_x() , it->second.get_y() };
+		current_body_rect.second = { it->second.get_x() + it->second.get_width(), it->second.get_y() + it->second.get_height() };
+		if (does_rectangles_intersects(sensitive_rect, current_body_rect))
 			v_actual_static_bodies_id.push_back(it->first);
-		}
 	}
 }
-bool mechanical_corrector::correct_position_and_set_distance(map_class* p_game_mp, entity* p_et)
+bool mechanical_interactor::correct_position_and_set_distance(map_class* p_game_mp, entity* p_et)
 {
 	bool correct = true;
 	float new_dist_left = INFINITY;
@@ -247,7 +248,7 @@ bool mechanical_corrector::correct_position_and_set_distance(map_class* p_game_m
 
 	return correct;
 }
-void mechanical_corrector::determ_position(map_class* p_game_mp, entity* p_et)
+void mechanical_interactor::determ_position(map_class* p_game_mp, entity* p_et)
 {
 	bool can_left = true, can_right = true, can_up = true, can_down = true;
 	if (p_et->get_dist_left() < near_eps)
@@ -366,7 +367,7 @@ void mechanical_corrector::determ_position(map_class* p_game_mp, entity* p_et)
 			}
 	}
 }
-bool mechanical_corrector::handle(map_class* p_game_mp, entity* p_et)
+bool mechanical_interactor::handle(map_class* p_game_mp, entity* p_et)
 {
 	find_static_bodies_in_area(p_game_mp, p_et->get_x() + p_et->get_width() / 2, p_et->get_y() + p_et->get_height() / 2);
 	if (!correct_position_and_set_distance(p_game_mp, p_et))
@@ -396,7 +397,7 @@ bool mechanical_corrector::handle(map_class* p_game_mp, entity* p_et)
 	p_et->set_speed(new_v_x, new_v_y);
 	return true;
 }
-bool mechanical_corrector::correct_speed(map_class* p_game_mp, map<unsigned int, entity*> map_entities, float cur_time)
+bool mechanical_interactor::correct_speed(map_class* p_game_mp, map<unsigned int, entity*> map_entities, float cur_time)
 {
 	time = cur_time;
 	for (auto it_entity = map_entities.begin(); it_entity != map_entities.end(); it_entity++)
@@ -407,40 +408,37 @@ bool mechanical_corrector::correct_speed(map_class* p_game_mp, map<unsigned int,
 	return true;
 }
 
-void dirt_interactor::find_body_circumstances_in_area(map_class* p_game_mp, float x0, float y0)
+void dirt_interactor::find_circumstances_in_area(map_class* p_game_mp, float x0, float y0)
 {
 	v_actual_dirt_damages_id.clear();
 	v_actual_dirt_replenishes_id.clear();
 	v_actual_dirt_unsticks_id.clear();
 
-	float actual_radius = 1000;
-	float bd_center_x, bd_center_y, et_center_x, et_center_y;
+	float actual_dist = 500;
+	std::pair<std::pair<float, float>, std::pair<float, float>> sensitive_rect;
+	sensitive_rect.first = { x0 - actual_dist, y0 - actual_dist };
+	sensitive_rect.second = { x0 + actual_dist, y0 + actual_dist };
+	std::pair<std::pair<float, float>, std::pair<float, float>> current_body_rect;
 	for (auto it = p_game_mp->get_dirt_circumstances().map_dirt_damages.begin(); it != p_game_mp->get_dirt_circumstances().map_dirt_damages.end(); it++)
 	{
-		bd_center_x = it->second.get_x() + it->second.get_width() / 2;
-		bd_center_y = it->second.get_y() + it->second.get_height() / 2;
-		if (sqrt((bd_center_x - x0) * (bd_center_x - x0) + (bd_center_y - y0) * (bd_center_y - y0)) <= actual_radius)
-		{
+		current_body_rect.first = { it->second.get_x() , it->second.get_y() };
+		current_body_rect.second = { it->second.get_x() + it->second.get_width(), it->second.get_y() + it->second.get_height() };
+		if (does_rectangles_intersects(sensitive_rect, current_body_rect))
 			v_actual_dirt_damages_id.push_back(it->first);
-		}
 	}
 	for (auto it = p_game_mp->get_dirt_circumstances().map_dirt_replenishes.begin(); it != p_game_mp->get_dirt_circumstances().map_dirt_replenishes.end(); it++)
 	{
-		bd_center_x = it->second.get_x() + it->second.get_width() / 2;
-		bd_center_y = it->second.get_y() + it->second.get_height() / 2;
-		if (sqrt((bd_center_x - x0) * (bd_center_x - x0) + (bd_center_y - y0) * (bd_center_y - y0)) <= actual_radius)
-		{
+		current_body_rect.first = { it->second.get_x() , it->second.get_y() };
+		current_body_rect.second = { it->second.get_x() + it->second.get_width(), it->second.get_y() + it->second.get_height() };
+		if (does_rectangles_intersects(sensitive_rect, current_body_rect))
 			v_actual_dirt_replenishes_id.push_back(it->first);
-		}
 	}
 	for (auto it = p_game_mp->get_dirt_circumstances().map_dirt_unsticks.begin(); it != p_game_mp->get_dirt_circumstances().map_dirt_unsticks.end(); it++)
 	{
-		bd_center_x = it->second.get_x() + it->second.get_width() / 2;
-		bd_center_y = it->second.get_y() + it->second.get_height() / 2;
-		if (sqrt((bd_center_x - x0) * (bd_center_x - x0) + (bd_center_y - y0) * (bd_center_y - y0)) <= actual_radius)
-		{
+		current_body_rect.first = { it->second.get_x() , it->second.get_y() };
+		current_body_rect.second = { it->second.get_x() + it->second.get_width(), it->second.get_y() + it->second.get_height() };
+		if (does_rectangles_intersects(sensitive_rect, current_body_rect))
 			v_actual_dirt_unsticks_id.push_back(it->first);
-		}
 	}
 }
 bool dirt_interactor::does_circumstance_intersect_dirt(static_circumstance* p_cr, dirt* p_drt)
@@ -487,7 +485,7 @@ void dirt_interactor::interact_with_circumstance(dirt_unstick* p_dd, dirt* p_drt
 }
 void dirt_interactor::handle(map_class* p_game_mp, dirt* p_drt)
 {
-	find_body_circumstances_in_area(p_game_mp, p_drt->get_x(), p_drt->get_y());
+	find_circumstances_in_area(p_game_mp, p_drt->get_x(), p_drt->get_y());
 	for (int i(0); i < v_actual_dirt_replenishes_id.size(); i++)
 	{
 		interact_with_circumstance(&p_game_mp->get_dirt_circumstances().map_dirt_replenishes[v_actual_dirt_replenishes_id[i]], p_drt);
@@ -521,193 +519,3 @@ bool interactor::interact(map_class& game_mp, std::map <unsigned int, dirt*> map
 	dirt_interactor_part.provide_interaction(&game_mp, map_dirts);
 	return true;
 }
-/*
-bool nature_class::update(game_map& game_mp, std::vector<entity>& v_et, float cur_time)
-{
-	if (!physics.update(game_mp, v_et, cur_time))
-		return false;
-	return true;
-}
-
-
-void physics_world_class::find_bodies_in_area(float x, float y)
-{
-	v_actual_body_walls_id.clear();
-
-	float find_radius = 500;
-	float bd_center_x, bd_center_y, et_center_x, et_center_y;
-	for (auto it = map_bodies.begin(); it != map_bodies.end(); it++)
-	{
-		bd_center_x = it->second.get_x() + it->second.get_width() / 2;
-		bd_center_y = it->second.get_y() + it->second.get_height() / 2;
-		if (sqrt((bd_center_x - x) * (bd_center_x - x) + (bd_center_y - y) * (bd_center_y - y)) <= find_radius)
-		{
-			v_actual_body_walls_id.push_back(it->first);
-		}
-	}
-}
-bool physics_world_class::does_bodies_conflict(body& body1, body& body2)
-{
-	if (!body1.is_strong() && !body2.is_strong())
-		return false;
-	pair <float, float> p1, p2;
-	p1.first = body1.get_x();
-	p1.second = body1.get_y();
-	p2.first = body1.get_x() + body1.get_width();
-	p2.second = body1.get_y() + body1.get_height();
-	pair <float, float> q1, q2;
-	q1.first = body2.get_x();
-	q1.second = body2.get_y();
-	q2.first = body2.get_x() + body2.get_width();
-	q2.second = body2.get_y() + body2.get_height();
-	float left = max(p1.first, q1.first);
-	float right = min(p2.first, q2.first);
-	float top = max(p1.second, q1.second);
-	float bottom = min(p2.second, q2.second);
-	if ((left < right || (abs(left - right) < EPS)) && (top < bottom || abs(top - bottom) < EPS))
-		return true;
-	return false;
-}
-bool physics_world_class::can_go_x(body& body_check)
-{
-	bool ok = true;
-	for (int i(0); i < v_actual_body_walls_id.size(); i++)
-	{
-		float serv_x = min(body_check.get_x(), body_check.get_x() + body_check.get_v_x() * time);
-		float serv_y = body_check.get_y();
-		float serv_width = abs(body_check.get_v_x() * time) + body_check.get_width();
-		float serv_height = body_check.get_height();
-		body service_body;
-		service_body.init(serv_x, serv_y, serv_width, serv_height, 0, 0, 0, 0, 0, 0, none_position);
-		if (does_bodies_conflict(map_bodies[v_actual_body_walls_id[i]], service_body))
-			ok = false;
-	}
-	return ok;
-}
-bool physics_world_class::can_go_y(body& body_check)
-{
-	bool ok = true;
-	for (int i(0); i < v_actual_body_walls_id.size(); i++)
-	{
-		float serv_x = body_check.get_x();
-		float serv_y = min(body_check.get_y(), body_check.get_y() + body_check.get_v_y() * time);
-		float serv_width = body_check.get_width();
-		float serv_height = abs(body_check.get_v_y() * time) + body_check.get_height();
-		body service_body;
-		service_body.init(serv_x, serv_y, serv_width, serv_height, 0, 0, 0, 0, 0, 0, none_position);
-		if (does_bodies_conflict(map_bodies[v_actual_body_walls_id[i]], service_body))
-			ok = false;
-	}
-	return ok;
-}
-bool physics_world_class::correct_position(body& body_check)
-{
-	bool correct = true;
-	for (int i(0); i < v_actual_body_walls_id.size(); i++)
-	{
-		if (does_bodies_conflict(map_bodies[v_actual_body_walls_id[i]], body_check))
-			correct = false;
-	}
-	return correct;
-}
-void physics_world_class::determ_position(body& body_check)
-{
-	bool can_left = true, can_right = true, can_up = true, can_down = true;
-	body temp_bd_check;
-	float near_body_eps_for_ground = 1.5, near_body_eps_for_stick = 5;
-	for (int i(0); i < v_actual_body_walls_id.size(); i++)
-	{
-		temp_bd_check.init(body_check.get_x() - near_body_eps_for_stick, body_check.get_y(), body_check.get_width(), body_check.get_height(), 0, 0, 0, 0, 0, 0, none_position);
-		if (does_bodies_conflict(map_bodies[v_actual_body_walls_id[i]], temp_bd_check))
-			can_left = false;
-		temp_bd_check.init(body_check.get_x() + near_body_eps_for_stick, body_check.get_y(), body_check.get_width(), body_check.get_height(), 0, 0, 0, 0, 0, 0, none_position);
-		if (does_bodies_conflict(map_bodies[v_actual_body_walls_id[i]], temp_bd_check))
-			can_right = false;
-		temp_bd_check.init(body_check.get_x(), body_check.get_y() - near_body_eps_for_stick, body_check.get_width(), body_check.get_height(), 0, 0, 0, 0, 0, 0, none_position);
-		if (does_bodies_conflict(map_bodies[v_actual_body_walls_id[i]], temp_bd_check))
-			can_up = false;
-		temp_bd_check.init(body_check.get_x(), body_check.get_y() + near_body_eps_for_ground, body_check.get_width(), body_check.get_height(), 0, 0, 0, 0, 0, 0, none_position);
-		if (does_bodies_conflict(map_bodies[v_actual_body_walls_id[i]], temp_bd_check))
-			can_down = false;
-	}
-
-	if (!can_down)
-		can_up = true;
-	if (!can_left)
-		can_right = true;
-
-	if (body_check.is_sticky())
-	{
-		if (can_left && can_right && can_up && can_down)
-			body_check.set_position(flying);
-		if (can_left && !can_right && can_up && can_down)
-			body_check.set_position(stick_right);
-		if (!can_left && can_right && can_up && can_down)
-			body_check.set_position(stick_left);
-		if (can_left && can_right && can_up && !can_down)
-			body_check.set_position(on_ground);
-		if (can_left && can_right && !can_up && can_down)
-			body_check.set_position(stick_up);
-		if (can_left && !can_right && can_up && !can_down)
-			body_check.set_position(in_right_down_angle);
-		if (!can_left && can_right && can_up && !can_down)
-			body_check.set_position(in_left_down_angle);
-		if (can_left && !can_right && !can_up && can_down)
-			body_check.set_position(in_right_up_angle);
-		if (!can_left && can_right && !can_up && can_down)
-			body_check.set_position(in_left_up_angle);
-	}
-	else
-	{
-		if (can_down)
-			body_check.set_position(flying);
-		if (!can_down)
-			body_check.set_position(on_ground);
-	}
-}
-void physics_world_class::exert_force(body& cur_body)
-{
-	if (cur_body.get_position() == flying)
-		cur_body.set_speed(cur_body.get_v_x(), cur_body.get_v_y() + GRAVITY_ACCELERATION);
-}
-bool physics_world_class::interact_with_bodies(body& cur_body)
-{
-	find_bodies_in_area(cur_body.get_x() + cur_body.get_width() / 2, cur_body.get_y() + cur_body.get_height() / 2);
-	if (!correct_position(cur_body))
-		return false;
-	determ_position(cur_body);
-	exert_force(cur_body);
-	bool can_x = can_go_x(cur_body);
-	bool can_y = can_go_y(cur_body);
-	if (!can_x)
-		cur_body.set_speed(0, cur_body.get_v_y());
-	if (!can_y)
-		cur_body.set_speed(cur_body.get_v_y(), 0);
-	return true;
-}
-bool physics_world_class::update(float time)
-{
-	for (auto it = map_bodies.begin(); it != map_bodies.end(); it++)
-		if (interact_with_bodies(it->second))
-			return false;
-	for (auto it = map_bodies.begin(); it != map_bodies.end(); it++)
-		it->second.update(time);
-	return true;
-}
-void physics_world_class::add_new_body(body& new_body)
-{
-	unsigned int new_id = 0;
-	bool find_position = false;
-	while (!find_position)
-	{
-		if (map_bodies.find(new_id) == map_bodies.end())
-			find_position = true;
-		else
-			new_id++;
-	}
-	map_bodies[new_id] = new_body;
-}
-void physics_world_class::delete_body_with_id(unsigned int delete_body_id)
-{
-	map_bodies.erase(delete_body_id);
-}*/

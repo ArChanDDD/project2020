@@ -10,6 +10,7 @@
 #include <string>
 #include <stdlib.h>
 #include <ctime>
+#include <filesystem>
 
 #include "tmx_reader.h"
 #include "SFML/Graphics.hpp"
@@ -17,6 +18,7 @@
 static const float from_pixels_to_meters = 1 / 3779.5751757502;
 static const float from_meters_to_pixels = 3779.5751757502;
 static const float gravitation = 9.8 * from_meters_to_pixels / 10;
+static const float jumping_acceleration = 15 * from_meters_to_pixels / 10;
 static const float rapprochement = 5000;
 static const float resistance_factor = 0.1;
 
@@ -32,6 +34,7 @@ float min(float, float);
 float max(float, float);
 
 bool does_rectangles_intersects(std::pair<std::pair<float, float>, std::pair<float, float>>, std::pair<std::pair<float, float>, std::pair<float, float>>);
+//float find_distance_from_point_to_rectangle(std::pair<float, float>, std::pair<std::pair<float, float>, std::pair<float, float>>);
 
 class image
 {
@@ -40,7 +43,7 @@ private:
 	int width;
 	int height;
 public:
-	bool init(tage);
+	bool init(tage, std::string);
 
 	std::string get_source();
 	int get_width();
@@ -57,7 +60,7 @@ private:
 	int columns;
 	image tileset_image;
 public:
-	bool init(tage);
+	bool init(tage, std::string);
 
 	int get_firstgid();
 	std::string get_name();
